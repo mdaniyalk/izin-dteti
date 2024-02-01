@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Izin Kelas DTETI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Izin Kelas DTETI</h2>
+    <form id="conversionForm">
+        <label for="namaMataKuliah">Nama Mata Kuliah:</label>
+        <input type="text" id="namaMataKuliah" name="namaMataKuliah" placeholder="Nama Mata Kuliah">
+
+        <label for="kelasMataKuliah">Kelas Mata Kuliah:</label>
+        <input type="text" id="kelasMataKuliah" name="kelasMataKuliah" placeholder="Kelas Mata Kuliah">
+
+        <label for="hariMataKuliah">Hari Mata Kuliah:</label>
+        <input type="text" id="hariMataKuliah" name="hariMataKuliah" placeholder="Hari Mata Kuliah">
+
+        <label for="jamMataKuliah">Jam Mata Kuliah:</label>
+        <input type="text" id="jamMataKuliah" name="jamMataKuliah" placeholder="Jam Mata Kuliah">
+
+        <label for="ruangMataKuliah">Ruang Mata Kuliah:</label>
+        <input type="text" id="ruangMataKuliah" name="ruangMataKuliah" placeholder="Ruang Mata Kuliah">
+
+        <label for="namaDosen">Nama Dosen:</label>
+        <input type="text" id="namaDosen" name="namaDosen" placeholder="Nama Dosen">
+
+        <label for="namaLengkap">Nama Lengkap:</label>
+        <input type="text" id="namaLengkap" name="namaLengkap" placeholder="Nama Lengkap">
+
+        <label for="prodi">Prodi:</label>
+        <input type="text" id="prodi" name="prodi" placeholder="Prodi">
+
+        <label for="nim">NIM:</label>
+        <input type="text" id="nim" name="nim" placeholder="NIM">
+
+        <label for="nomorHP">Nomor HP:</label>
+        <input type="text" id="nomorHP" name="nomorHP" placeholder="Nomor HP">
+
+        <label for="waktuIzin">Waktu Izin:</label>
+        <input type="text" id="waktuIzin" name="waktuIzin" placeholder="Waktu Izin">
+
+        <label for="alasan">Alasan:</label>
+        <input type="text" id="alasan" name="alasan" placeholder="Alasan">
+
+        <label for="waktuPermohonan">Waktu Permohonan:</label>
+        <input type="text" id="waktuPermohonan" name="waktuPermohonan" placeholder="Waktu Permohonan">
+
+        <button type="button" onclick="convertWordToPdf()">Generate</button>
+    </form>
+
+    <div id="downloadLink" style="display: none;">
+        <p>Download Surat Izin (.docx): <a id="pdfLink" href="#" download>Click here</a></p>
+    </div>
+
+    <script>
+        async function convertWordToPdf() {
+            const namaMataKuliah = document.getElementById('namaMataKuliah').value;
+            const kelasMataKuliah = document.getElementById('kelasMataKuliah').value;
+            const hariMataKuliah = document.getElementById('hariMataKuliah').value;
+            const jamMataKuliah = document.getElementById('jamMataKuliah').value;
+            const ruangMataKuliah = document.getElementById('ruangMataKuliah').value;
+            const namaDosen = document.getElementById('namaDosen').value;
+            const namaLengkap = document.getElementById('namaLengkap').value;
+            const prodi = document.getElementById('prodi').value;
+            const nim = document.getElementById('nim').value;
+            const nomorHP = document.getElementById('nomorHP').value;
+            const waktuIzin = document.getElementById('waktuIzin').value;
+            const alasan = document.getElementById('alasan').value;
+            const waktuPermohonan = document.getElementById('waktuPermohonan').value;
+            
+            const url = "/replace-and-download";
+            const formData = new FormData();
+            formData.append('namaMataKuliah', namaMataKuliah);
+            formData.append('kelasMataKuliah', kelasMataKuliah);
+            formData.append('hariMataKuliah', hariMataKuliah);
+            formData.append('jamMataKuliah', jamMataKuliah);
+            formData.append('ruangMataKuliah', ruangMataKuliah);
+            formData.append('namaDosen', namaDosen);
+            formData.append('namaLengkap', namaLengkap);
+            formData.append('prodi', prodi);
+            formData.append('nim', nim);
+            formData.append('nomorHP', nomorHP);
+            formData.append('waktuIzin', waktuIzin);
+            formData.append('alasan', alasan);
+            formData.append('waktuPermohonan', waktuPermohonan);
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+            });
+            
+            if (response.ok) {
+                const blob = await response.blob();
+
+                // Display the download link
+                document.getElementById('downloadLink').style.display = 'block';
+                const downloadLink = document.getElementById('pdfLink');
+                downloadLink.href = URL.createObjectURL(blob);
+            } else {
+                // Handle error
+                console.error("Error during conversion:", response.status, response.statusText);
+            }
+        }
+
+        // Fetch file names based on selected category
+        document.getElementById('category').addEventListener('change', async function () {
+            const category = this.value;
+            const fileSelect = document.getElementById('file');
+
+            // Fetch file names for the selected category
+            const response = await fetch(`http://localhost:8000/files/${category}`);
+            const files = await response.json();
+
+            // Update the file select options
+            fileSelect.innerHTML = '';
+            files.forEach(file => {
+                const option = document.createElement('option');
+                option.value = file;
+                option.text = file;
+                fileSelect.add(option);
+            });
+        });
+    </script>
+</body>
+</html>
