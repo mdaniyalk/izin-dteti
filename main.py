@@ -16,7 +16,7 @@ app = FastAPI()
 # Allow cross-origin requests (CORS) for local development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost", "http://localhost:5000"],
+    allow_origins=["http://localhost", "http://localhost:5000", "izindteti.daniyalkautsar.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,7 +52,7 @@ def replace_text(doc, old_text, new_text, font_size=11):
                     run.font.size = Pt(font_size)
                     run.font.color.rgb = font.color.rgb
                     
-                    print(f"Old text: '{old_text}', New text: '{new_text}'")
+                    
 
     for table in doc.tables:
         for row in table.rows:
@@ -72,7 +72,7 @@ def replace_text(doc, old_text, new_text, font_size=11):
                             run.font.size = Pt(font_size)
                             run.font.color.rgb = font.color.rgb
                             
-                            print(f"Old text: '{old_text}', New text: '{new_text}'")
+                            
 
 
 def save_as_word(doc, filename):
