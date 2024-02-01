@@ -58,8 +58,7 @@ def replace_text(doc, old_text, new_text, font_size=11):
         for row in table.rows:
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
-                    if old_text in paragraph.text:
-                        
+                       
                     for run in paragraph.runs:
                        
                         if old_text in run.text:
